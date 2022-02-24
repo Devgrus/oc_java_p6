@@ -21,13 +21,13 @@ public class Member {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String username;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
-    private String username;
+    private String nickname;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

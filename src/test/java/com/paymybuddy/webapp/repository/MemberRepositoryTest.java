@@ -28,9 +28,9 @@ public class MemberRepositoryTest {
         //given
         Member user1 = Member.builder()
                 .id(1L)
-                .email("abc@email.com")
+                .username("abc@email.com")
                 .password("1111")
-                .username("user1")
+                .nickname("user1")
                 .role(Role.GUEST)
                 .bankAccount("111-111-1111")
                 .amount(BigDecimal.valueOf(1000))
@@ -44,6 +44,6 @@ public class MemberRepositoryTest {
 
         //then
 
-        assertThat(memberRepository.findByEmail("abc@email.com").getId()).isEqualTo(1L);
+        assertThat(memberRepository.findByUsername("abc@email.com").get().getId()).isEqualTo(1L);
     }
 }
