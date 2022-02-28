@@ -1,5 +1,6 @@
 package com.paymybuddy.webapp.service;
 
+import com.paymybuddy.webapp.dto.BankAccountUpdateDto;
 import com.paymybuddy.webapp.dto.SignupDto;
 import com.paymybuddy.webapp.model.Member;
 import com.paymybuddy.webapp.model.Role;
@@ -43,5 +44,18 @@ public class MemberService {
                 .build();
 
         return memberRepository.save(newMember);
+    }
+
+    public boolean addBankAccount(BankAccountUpdateDto bankAccountUpdateDto) {
+        Optional<Member> optionalMember = memberRepository.findByUsername(bankAccountUpdateDto.getCustomUserDetails().getUsername());
+        if(optionalMember.isEmpty()) {
+            return false;
+        }
+
+//        member.get().setBankAccount(bankAccountUpdateDto.getBankAccount());
+        optionalMember.ifPresent(i-> i.setBankAccount(bankAccountUpdateDto.getBankAccount()));
+
+        System.out.println(optionalMember.get().getBankAccount());
+        return true;
     }
 }

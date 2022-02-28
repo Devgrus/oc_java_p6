@@ -1,6 +1,8 @@
 package com.paymybuddy.webapp.service;
 
+import com.paymybuddy.webapp.dto.BankAccountUpdateDto;
 import com.paymybuddy.webapp.dto.SignupDto;
+import com.paymybuddy.webapp.model.CustomUserDetails;
 import com.paymybuddy.webapp.model.Member;
 import com.paymybuddy.webapp.model.Role;
 import com.paymybuddy.webapp.repository.MemberRepository;
@@ -74,6 +76,64 @@ public class MemberServiceTest {
 
         //then
         assertThatIllegalStateException().isThrownBy(()->memberService.save(signupDto));
+    }
+
+    @Test
+    public void addBankAccountTest() {
+        //given
+        Member member = Member.builder()
+                .username("ab@gmail.com")
+                .password("1x#231")
+                .nickname("ab")
+                .role(Role.GUEST)
+                .bankAccount(null)
+                .amount(BigDecimal.valueOf(0))
+                .connections(null)
+                .banktransitions(null)
+                .usertransitions(null)
+                .build();
+
+        CustomUserDetails customUserDetails = new CustomUserDetails(member);
+
+        BankAccountUpdateDto bankAccountUpdateDto = BankAccountUpdateDto.builder()
+                .customUserDetails(customUserDetails)
+                .bankAccount("111-111-1111")
+                .build();
+
+        //when
+        when(memberRepository.findByUsername(anyString())).thenReturn(Optional.of(member));
+
+        //then
+        assertThat(memberService.addBankAccount(bankAccountUpdateDto)).isTrue();
+    }
+
+    @Test
+    public void addBankAccountTestMemberIsEmpty() {
+        //given
+        Member member = Member.builder()
+                .username("ab@gmail.com")
+                .password("1x#231")
+                .nickname("ab")
+                .role(Role.GUEST)
+                .bankAccount(null)
+                .amount(BigDecimal.valueOf(0))
+                .connections(null)
+                .banktransitions(null)
+                .usertransitions(null)
+                .build();
+
+        CustomUserDetails customUserDetails = new CustomUserDetails(member);
+
+        BankAccountUpdateDto bankAccountUpdateDto = BankAccountUpdateDto.builder()
+                .customUserDetails(customUserDetails)
+                .bankAccount("111-111-1111")
+                .build();
+
+        //when
+        when(memberRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+
+        //then
+        assertThat(memberService.addBankAccount(bankAccountUpdateDto)).isFalse();
     }
 
 }
