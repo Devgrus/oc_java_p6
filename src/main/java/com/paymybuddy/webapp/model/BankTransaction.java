@@ -7,13 +7,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transition_bank")
+@Table(name = "transaction_bank")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BankTransition {
+public class BankTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,8 @@ public class BankTransition {
     @Column
     private BigDecimal fee;
 
-    @Column(name = "transition_time")
-    private LocalDateTime transitionTime;
+    @Column(name = "transaction_time")
+    private LocalDateTime transactionTime;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

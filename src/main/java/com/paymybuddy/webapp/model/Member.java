@@ -47,9 +47,9 @@ public class Member {
     private Set<Member> connections;
 
     @OneToMany(mappedBy = "member")
-    private List<BankTransition> banktransitions;
+    private List<BankTransaction> banktransitions;
 
     @OneToMany(mappedBy = "remitter")
-    private List<MemberTransition> usertransitions;
+    private List<MemberTransaction> usertransitions;
 
 }

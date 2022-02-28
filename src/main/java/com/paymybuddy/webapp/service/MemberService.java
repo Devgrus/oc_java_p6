@@ -55,7 +55,10 @@ public class MemberService {
 //        member.get().setBankAccount(bankAccountUpdateDto.getBankAccount());
         optionalMember.ifPresent(i-> i.setBankAccount(bankAccountUpdateDto.getBankAccount()));
 
-        System.out.println(optionalMember.get().getBankAccount());
         return true;
+    }
+
+    public Optional<Member> findByUsername(String email) {
+        return memberRepository.findByUsername(email);
     }
 }
