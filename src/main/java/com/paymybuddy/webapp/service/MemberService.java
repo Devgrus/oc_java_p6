@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,6 +59,7 @@ public class MemberService {
         return true;
     }
 
+    @Transactional
     public Optional<Member> findByUsername(String email) {
         return memberRepository.findByUsername(email);
     }
