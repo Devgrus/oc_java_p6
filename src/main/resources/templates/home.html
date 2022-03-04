@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
     <title>Home</title>
 </head>
-<body>
+<body layout:fragment="content">
     <h1>This is home</h1>
+    <span sec:authorize="isAuthenticated()" th:text="${#authentication.getPrincipal().getNickname()}"></span>
 </body>
 </html>

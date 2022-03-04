@@ -44,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .headers().addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
                 .and().formLogin()
+                .loginPage("/login")
                 .and().logout()
                 .logoutSuccessUrl("/")
 //                .and().oauth2Login()
