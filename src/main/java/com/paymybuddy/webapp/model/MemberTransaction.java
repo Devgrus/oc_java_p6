@@ -28,6 +28,9 @@ public class MemberTransaction {
     @Column(name = "transaction_time")
     private LocalDateTime transitionTime;
 
+    @Column
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "remitter")
     private Member remitter;

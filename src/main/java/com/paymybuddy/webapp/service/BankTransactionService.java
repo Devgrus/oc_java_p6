@@ -33,15 +33,14 @@ public class BankTransactionService {
         Member member = optionalMember.get();
 
         BigDecimal amountBefore = member.getAmount();
-        if(amountBefore.compareTo(new BigDecimal("2.1")) < 0) {
-            throw new IllegalStateException("Should have more than 2,1 euro");
+
+        if(amount.compareTo(new BigDecimal("1")) < 0) {
+            throw new IllegalStateException("Minimum 1€");
         }
 
-        if(amount.compareTo(new BigDecimal("2.1")) < 0) {
-            throw new IllegalStateException("Should send more than 2,1 euro");
-        }
-
-        BigDecimal fee = amount.multiply(new BigDecimal("0.005")).setScale(2, RoundingMode.HALF_EVEN);
+        BigDecimal fee = amount.compareTo(new BigDecimal("2.1")) >= 0 ?
+                amount.multiply(new BigDecimal("0.005")).setScale(2, RoundingMode.HALF_EVEN) :
+                new BigDecimal("0.01");
 
         if(amountBefore.compareTo(amount.add(fee)) < 0) {
             throw new IllegalStateException("Not enough money");
@@ -67,16 +66,13 @@ public class BankTransactionService {
 
         BigDecimal amountBefore = member.getAmount();
 
-        //TODO : REFACTOR
-        if(amount.compareTo(new BigDecimal("2.1")) < 0) {
-            throw new IllegalStateException("Should send more than 2,1 euro");
+        if(amount.compareTo(new BigDecimal("1")) < 0) {
+            throw new IllegalStateException("Minimum 1€");
         }
 
-        BigDecimal fee = amount.multiply(new BigDecimal("0.005")).setScale(2, RoundingMode.HALF_EVEN);
-
-        if(amountBefore.compareTo(amount.add(fee)) < 0) {
-            throw new IllegalStateException("Not enough money");
-        }
+        BigDecimal fee = amount.compareTo(new BigDecimal("2.1")) >= 0 ?
+                amount.multiply(new BigDecimal("0.005")).setScale(2, RoundingMode.HALF_EVEN) :
+                new BigDecimal("0.01");
 
         member.setAmount(amountBefore.add(amount));
         BankTransaction bankTransaction = BankTransaction.builder()
