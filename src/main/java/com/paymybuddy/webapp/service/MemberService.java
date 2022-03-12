@@ -68,15 +68,16 @@ public class MemberService {
     public Optional<Member> findById(Long id) { return memberRepository.findById(id); }
 
     @Transactional
-    public boolean addConnection(String username, ConnectionDto connectionDto) {
+    public void addConnection(String username, ConnectionDto connectionDto) {
         Optional<Member> optionalMember = findByUsername(username);
-        Optional<Member> optionalConnectionMember = memberRepository.findByUsername(connectionDto.getUsername());
-        if(optionalMember.isEmpty()) return false;
-        if(optionalConnectionMember.isEmpty()) throw new IllegalStateException("User not found");
+        Optional<Member> optionalConnectionMember = findByUsername(connectionDto.getUsername());
+        if(optionalMember.isEmpty() || optionalConnectionMember.isEmpty()) throw new IllegalStateException("User not found");
 
         Member member = optionalMember.get();
+
+        if(member.getId() == optionalConnectionMember.get().getId()) throw new IllegalStateException("Can not add yourself");
+
         member.getConnections().add(optionalConnectionMember.get());
-        return true;
     }
 
     @Transactional

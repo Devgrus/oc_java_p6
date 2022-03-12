@@ -38,6 +38,7 @@ public class MemberTransactionServiceTest {
     @BeforeAll
     static public void initAll() {
         member1 = Member.builder()
+                .id(1L)
                 .username("ab@gmail.com")
                 .password("1x#231")
                 .nickname("thisuser")
@@ -49,6 +50,7 @@ public class MemberTransactionServiceTest {
                 .usertransitions(new ArrayList<>())
                 .build();
         member2 = Member.builder()
+                .id(2L)
                 .username("cd@gmail.com")
                 .password("1x#231")
                 .nickname("ba")

@@ -42,6 +42,7 @@ public class MemberServiceTest {
     @BeforeAll
     static public void initAll() {
         member1 = Member.builder()
+                .id(1L)
                 .username("ab@gmail.com")
                 .password("1x#231")
                 .nickname("thisuser")
@@ -53,6 +54,7 @@ public class MemberServiceTest {
                 .usertransitions(new ArrayList<>())
                 .build();
         member2 = Member.builder()
+                .id(2L)
                 .username("cd@gmail.com")
                 .password("1x#231")
                 .nickname("ba")
@@ -164,12 +166,16 @@ public class MemberServiceTest {
         ConnectionDto connectionDto = ConnectionDto.builder()
                 .username("cd@gmail.com").build();
 
+        Optional<Member> optionalMember1 = Optional.of(member1);
+        Optional<Member> optionalMember2 = Optional.of(member2);
+
         //when
-        when(memberService.findByUsername(member1.getUsername())).thenReturn(Optional.of(member1));
-        when(memberService.findByUsername(member2.getUsername())).thenReturn(Optional.of(member2));
+        when(memberService.findByUsername(member1.getUsername())).thenReturn(optionalMember1);
+        when(memberService.findByUsername(member2.getUsername())).thenReturn(optionalMember2);
 
         //then
-        assertThat(memberService.addConnection(customUserDetails.getUsername(), connectionDto)).isTrue();
+        memberService.addConnection(customUserDetails.getUsername(), connectionDto);
+        assertThat(optionalMember1.get().getConnections().contains(optionalMember2.get())).isTrue();
     }
 
     @Test
@@ -186,7 +192,7 @@ public class MemberServiceTest {
         when(memberService.findByUsername(member2.getUsername())).thenReturn(Optional.of(member2));
 
         //then
-        assertThat(memberService.addConnection(customUserDetails.getUsername(), connectionDto)).isFalse();
+        assertThatIllegalStateException().isThrownBy(()->memberService.addConnection(customUserDetails.getUsername(), connectionDto));
     }
 
     @Test
