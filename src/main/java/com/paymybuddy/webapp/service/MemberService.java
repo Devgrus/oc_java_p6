@@ -65,6 +65,9 @@ public class MemberService {
     }
 
     @Transactional
+    public Optional<Member> findById(Long id) { return memberRepository.findById(id); }
+
+    @Transactional
     public boolean addConnection(String username, ConnectionDto connectionDto) {
         Optional<Member> optionalMember = findByUsername(username);
         Optional<Member> optionalConnectionMember = memberRepository.findByUsername(connectionDto.getUsername());
