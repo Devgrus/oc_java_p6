@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Contact</title>
+</head>
+<body layout:fragment="content">
+
+    <form class="w-50" method="post" action="/contact">
+        <h1 class="h3 mb-3 font-weight-normal">Add your friends !</h1>
+        <label for="username" class="sr-only">Email</label>
+        <input type="email" id="username" name="username" class="form-control" placeholder="Email" required autofocus>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Add</button>
+    </form>
+    <table class="table">
+        <h2>Connection List</h2>
+        <thead>
+            <tr>
+                <th scope="col">Email</th>
+                <th scope="col">Nickname</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="connection: ${connectionList}">
+                <td th:text="${connection.username}"></td>
+                <td th:text="${connection.nickname}"></td>
+                <td>
+                    <form th:method="delete" th:action="@{/contact/{username}(username=${connection.username})}">
+                        <button class="btn btn-lg btn-danger btn-block" type="submit">-</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

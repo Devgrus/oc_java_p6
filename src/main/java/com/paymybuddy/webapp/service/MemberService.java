@@ -1,6 +1,7 @@
 package com.paymybuddy.webapp.service;
 
 import com.paymybuddy.webapp.dto.BankAccountUpdateDto;
+import com.paymybuddy.webapp.dto.ConnectionDto;
 import com.paymybuddy.webapp.dto.SignupDto;
 import com.paymybuddy.webapp.model.Member;
 import com.paymybuddy.webapp.model.Role;
@@ -11,9 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MemberService {
@@ -52,9 +51,10 @@ public class MemberService {
         if(optionalMember.isEmpty()) {
             return false;
         }
-
-//        member.get().setBankAccount(bankAccountUpdateDto.getBankAccount());
-        optionalMember.ifPresent(i-> i.setBankAccount(bankAccountUpdateDto.getBankAccount()));
+        optionalMember.ifPresent(i-> {
+            i.setBankAccount(bankAccountUpdateDto.getBankAccount());
+            i.setRole(Role.USER);
+                });
 
         return true;
     }
@@ -62,5 +62,38 @@ public class MemberService {
     @Transactional
     public Optional<Member> findByUsername(String email) {
         return memberRepository.findByUsername(email);
+    }
+
+    @Transactional
+    public Optional<Member> findById(Long id) { return memberRepository.findById(id); }
+
+    @Transactional
+    public void addConnection(String username, ConnectionDto connectionDto) {
+        Optional<Member> optionalMember = findByUsername(username);
+        Optional<Member> optionalConnectionMember = findByUsername(connectionDto.getUsername());
+        if(optionalMember.isEmpty() || optionalConnectionMember.isEmpty()) throw new IllegalStateException("User not found");
+
+        Member member = optionalMember.get();
+
+        if(member.getId() == optionalConnectionMember.get().getId()) throw new IllegalStateException("Can not add yourself");
+
+        member.getConnections().add(optionalConnectionMember.get());
+    }
+
+    @Transactional
+    public void deleteConnection(String username, String connectionUsername) {
+        Optional<Member> optionalMember = findByUsername(username);
+        if(optionalMember.isEmpty()) throw new IllegalStateException("Invalid user");
+
+        Member member = optionalMember.get();
+        member.getConnections().stream()
+                .filter(i-> Objects.equals(i.getUsername(), connectionUsername)).findFirst()
+                .ifPresent(member.getConnections()::remove);
+    }
+
+    public Set<Member> getAllConnections(String username) {
+        Optional<Member> optionalMember = findByUsername(username);
+        if(optionalMember.isEmpty()) throw new IllegalStateException("User not exist");
+        return optionalMember.get().getConnections();
     }
 }

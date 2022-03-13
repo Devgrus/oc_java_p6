@@ -28,12 +28,15 @@ public class MemberTransaction {
     @Column(name = "transaction_time")
     private LocalDateTime transitionTime;
 
+    @Column
+    private String description;
+
     @ManyToOne
-    @JoinColumn(name = "remitter")
+    @JoinColumn(name = "remitter_id")
     private Member remitter;
 
     @ManyToOne
-    @JoinColumn(name = "receiver")
+    @JoinColumn(name = "receiver_id")
     private Member receiver;
 
 }

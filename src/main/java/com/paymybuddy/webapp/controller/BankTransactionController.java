@@ -7,9 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/bankTransaction")
@@ -23,19 +24,36 @@ public class BankTransactionController {
         this.bankTransactionService = bankTransactionService;
     }
 
+    @GetMapping
+    public String bankTransactionPage() {
+        logger.info("Request Received: GET /bankTransaction");
+        return "bankTransaction";
+    }
+
+
     @PostMapping("/send")
-    public String send(@AuthenticationPrincipal CustomUserDetails customUserDetails, BankTransactionDto bankTransactionDto, Model model) {
+    public String send(@AuthenticationPrincipal CustomUserDetails customUserDetails, BankTransactionDto bankTransactionDto, RedirectAttributes rttr) {
+        logger.info("Request Received: POST /bankTransaction/send");
+        logger.info("Amount: " + bankTransactionDto.getAmount());
         try {
             bankTransactionService.sendToBank(customUserDetails, bankTransactionDto.getAmount());
         } catch(IllegalStateException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-
+            rttr.addFlashAttribute("errorMessage", e.getMessage());
+            logger.error(e.getMessage());
         }
         return "redirect:/bankTransaction";
     }
 
     @PostMapping("/receive")
-    public String receive() {
-        return "";
+    public String receive(@AuthenticationPrincipal CustomUserDetails customUserDetails, BankTransactionDto bankTransactionDto, RedirectAttributes rttr) {
+        logger.info("Request Received: POST /bankTransaction/receive");
+        logger.info("Amount: " + bankTransactionDto.getAmount());
+        try {
+            bankTransactionService.receiveFromBank(customUserDetails, bankTransactionDto.getAmount());
+        } catch(IllegalStateException e) {
+            rttr.addAttribute("errorMessage", e.getMessage());
+            logger.error(e.getMessage());
+        }
+        return "redirect:/bankTransaction";
     }
 }
