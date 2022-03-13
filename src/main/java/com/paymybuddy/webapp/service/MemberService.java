@@ -46,17 +46,14 @@ public class MemberService {
         return memberRepository.save(newMember);
     }
 
-    public boolean addBankAccount(BankAccountUpdateDto bankAccountUpdateDto) {
-        Optional<Member> optionalMember = memberRepository.findByUsername(bankAccountUpdateDto.getCustomUserDetails().getUsername());
-        if(optionalMember.isEmpty()) {
-            return false;
-        }
+    @Transactional
+    public void setBankAccount(BankAccountUpdateDto bankAccountUpdateDto) {
+        Optional<Member> optionalMember = findByUsername(bankAccountUpdateDto.getCustomUserDetails().getUsername());
+        if(optionalMember.isEmpty()) throw new IllegalStateException("User not found");
         optionalMember.ifPresent(i-> {
             i.setBankAccount(bankAccountUpdateDto.getBankAccount());
-            i.setRole(Role.USER);
+            if(i.getRole() == Role.GUEST) i.setRole(Role.USER);
                 });
-
-        return true;
     }
 
     @Transactional

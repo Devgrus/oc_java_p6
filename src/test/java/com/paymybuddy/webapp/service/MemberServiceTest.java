@@ -90,7 +90,7 @@ public class MemberServiceTest {
     public void saveTest() {
         //given
         SignupDto signupDto = SignupDto.builder()
-                .username("abc@gmail.com")
+                .username("ab@gmail.com")
                 .password("12345")
                 .nickname("thisuser")
                 .build();
@@ -101,7 +101,7 @@ public class MemberServiceTest {
         when(memberRepository.save(any())).thenReturn(member1);
 
         //then
-        assertThat(memberService.save(signupDto).getUsername()).isEqualTo("abc@gmail.com");
+        assertThat(memberService.save(signupDto).getUsername()).isEqualTo(member1.getUsername());
     }
 
     @Test
@@ -122,8 +122,9 @@ public class MemberServiceTest {
     }
 
     @Test
-    public void addBankAccountTest() {
+    public void setBankAccountTest() {
         //given
+        member1.setRole(Role.GUEST);
 
         CustomUserDetails customUserDetails = new CustomUserDetails(member1);
 
@@ -132,11 +133,15 @@ public class MemberServiceTest {
                 .bankAccount("111-111-1111")
                 .build();
 
+        Optional<Member> optionalMember1 = Optional.of(member1);
+
         //when
-        when(memberRepository.findByUsername(anyString())).thenReturn(Optional.of(member1));
+        when(memberService.findByUsername(anyString())).thenReturn(optionalMember1);
 
         //then
-        assertThat(memberService.addBankAccount(bankAccountUpdateDto)).isTrue();
+        memberService.setBankAccount(bankAccountUpdateDto);
+        assertThat(optionalMember1.get().getBankAccount()).isEqualTo("111-111-1111");
+        assertThat(optionalMember1.get().getRole()).isEqualTo(Role.USER);
     }
 
     @Test
@@ -154,7 +159,7 @@ public class MemberServiceTest {
         when(memberRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
         //then
-        assertThat(memberService.addBankAccount(bankAccountUpdateDto)).isFalse();
+        assertThatIllegalStateException().isThrownBy(()->memberService.setBankAccount(bankAccountUpdateDto));
     }
 
     @Test
