@@ -16,31 +16,33 @@ import java.util.Optional;
 @Service
 public class BankTransactionService {
 
-    @Autowired
     private final BankTransactionRepository bankTransactionRepository;
-
-    @Autowired
     private final MemberService memberService;
 
+    @Autowired
     public BankTransactionService(BankTransactionRepository bankTransactionRepository, MemberService memberService) {
         this.bankTransactionRepository = bankTransactionRepository;
         this.memberService = memberService;
     }
+
+    public boolean isBankAccountExist(String username) {
+        Optional<Member> optionalMember = memberService.findByUsername(username);
+        if(optionalMember.isEmpty()) throw new IllegalStateException("User not found");
+        return optionalMember.get().getBankAccount() != null;
+    }
+
     @Transactional
-    public boolean sendToBank(CustomUserDetails memberInfo, BigDecimal amount) {
-        Optional<Member> optionalMember = memberService.findByUsername(memberInfo.getUsername());
-        if(optionalMember.isEmpty()) return false;
+    public void sendToBank(String username, BigDecimal amount) {
+        Optional<Member> optionalMember = memberService.findByUsername(username);
+        if(optionalMember.isEmpty()) throw new IllegalStateException("User not found");
+
         Member member = optionalMember.get();
 
         BigDecimal amountBefore = member.getAmount();
 
-        if(amount.compareTo(new BigDecimal("1")) < 0) {
-            throw new IllegalStateException("Minimum 1€");
-        }
+        isMoreThanMinimumTransactionAmount(amount);
 
-        BigDecimal fee = amount.compareTo(new BigDecimal("2.1")) >= 0 ?
-                amount.multiply(new BigDecimal("0.005")).setScale(2, RoundingMode.HALF_EVEN) :
-                new BigDecimal("0.01");
+        BigDecimal fee = calculateFee(amount);
 
         if(amountBefore.compareTo(amount.add(fee)) < 0) {
             throw new IllegalStateException("Not enough money");
@@ -54,25 +56,20 @@ public class BankTransactionService {
                 .member(member).build();
 
         bankTransactionRepository.save(bankTransaction);
-
-        return true;
     }
 
     @Transactional
-    public boolean receiveFromBank(CustomUserDetails memberInfo, BigDecimal amount) {
-        Optional<Member> optionalMember = memberService.findByUsername(memberInfo.getUsername());
-        if(optionalMember.isEmpty()) return false;
+    public void receiveFromBank(String username, BigDecimal amount) {
+        Optional<Member> optionalMember = memberService.findByUsername(username);
+        if(optionalMember.isEmpty()) throw new IllegalStateException("User not found");
+
         Member member = optionalMember.get();
 
         BigDecimal amountBefore = member.getAmount();
 
-        if(amount.compareTo(new BigDecimal("1")) < 0) {
-            throw new IllegalStateException("Minimum 1€");
-        }
+        isMoreThanMinimumTransactionAmount(amount);
 
-        BigDecimal fee = amount.compareTo(new BigDecimal("2.1")) >= 0 ?
-                amount.multiply(new BigDecimal("0.005")).setScale(2, RoundingMode.HALF_EVEN) :
-                new BigDecimal("0.01");
+        BigDecimal fee = calculateFee(amount);
 
         member.setAmount(amountBefore.add(amount));
         BankTransaction bankTransaction = BankTransaction.builder()
@@ -82,7 +79,15 @@ public class BankTransactionService {
                 .member(member).build();
 
         bankTransactionRepository.save(bankTransaction);
+    }
 
-        return true;
+    private void isMoreThanMinimumTransactionAmount(BigDecimal amount) {
+        if(amount.compareTo(new BigDecimal("1")) < 0) throw new IllegalStateException("Minimum 1€");
+    }
+
+    private BigDecimal calculateFee(BigDecimal amount) {
+        return amount.compareTo(new BigDecimal("2.1")) >= 0 ?
+                amount.multiply(new BigDecimal("0.005")).setScale(2, RoundingMode.HALF_EVEN) :
+                new BigDecimal("0.01");
     }
 }

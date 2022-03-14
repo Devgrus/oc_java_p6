@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Set bank account</title>
+</head>
+<body layout:fragment="content" method="post" th:action="@{/profile/bankAccount}">
+<main class="d-flex justify-content-center">
+  <form class="w-50" method="post">
+    <h1 class="h3 mb-3 font-weight-normal">Set your bank account</h1>
+    <p th:text="${errorMessage}"></p>
+    <div class="input-group mb-3">
+      <input type="text" id="bankAccount" name="bankAccount" class="form-control" placeholder="Bank account" required autofocus>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Change</button>
+  </form>
+</main>
+</body>
+</html>

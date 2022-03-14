@@ -4,6 +4,8 @@ import com.paymybuddy.webapp.model.CustomUserDetails;
 import com.paymybuddy.webapp.model.Member;
 import com.paymybuddy.webapp.model.Role;
 import com.paymybuddy.webapp.repository.BankTransactionRepository;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,20 +32,38 @@ public class BankTransactionServiceTest {
     @InjectMocks
     BankTransactionService bankTransactionService;
 
-    @Test
-    public void sendToBankTest() {
-        //given
-        Member member = Member.builder()
+    static Member member;
+
+    @BeforeAll
+    static public void initAll() {
+        member = Member.builder()
+                .id(1L)
                 .username("ab@gmail.com")
                 .password("1x#231")
-                .nickname("ab")
-                .role(Role.GUEST)
-                .bankAccount("12345")
-                .amount(BigDecimal.valueOf(200))
+                .nickname("thisuser")
+                .role(Role.USER)
+                .bankAccount("11-1111-1111")
+                .amount(BigDecimal.valueOf(0))
                 .connections(new HashSet<>())
                 .banktransitions(new ArrayList<>())
                 .usertransitions(new ArrayList<>())
                 .build();
+    }
+
+    @BeforeEach
+    public void init() {
+        member.setRole(Role.USER);
+        member.setBankAccount("11-1111-1111");
+        member.setAmount(BigDecimal.valueOf(0));
+        member.setConnections(new HashSet<>());
+        member.setBanktransitions(new ArrayList<>());
+        member.setUsertransitions(new ArrayList<>());
+    }
+
+    @Test
+    public void sendToBankTest() {
+        //given
+        member.setAmount(BigDecimal.valueOf(1000L));
 
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
@@ -52,7 +72,8 @@ public class BankTransactionServiceTest {
         when(bankTransactionRepository.save(any())).thenReturn(any());
 
         //then
-        assertThat(bankTransactionService.sendToBank(customUserDetails, BigDecimal.TEN)).isTrue();
+        bankTransactionService.sendToBank(member.getUsername(), BigDecimal.TEN);
+        assertThat(member.getAmount()).isEqualTo(new BigDecimal("989.95"));
     }
 
     @Test
@@ -62,7 +83,7 @@ public class BankTransactionServiceTest {
                 .username("ab@gmail.com")
                 .password("1x#231")
                 .nickname("ab")
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .bankAccount("12345")
                 .amount(new BigDecimal("2.0"))
                 .connections(new HashSet<>())
@@ -76,7 +97,7 @@ public class BankTransactionServiceTest {
         when(memberService.findByUsername(anyString())).thenReturn(Optional.of(member));
 
         //then
-        assertThatIllegalStateException().isThrownBy(()->bankTransactionService.sendToBank(customUserDetails, BigDecimal.TEN));
+        assertThatIllegalStateException().isThrownBy(()->bankTransactionService.sendToBank(customUserDetails.getUsername(), BigDecimal.TEN));
     }
 
     @Test
@@ -86,7 +107,7 @@ public class BankTransactionServiceTest {
                 .username("ab@gmail.com")
                 .password("1x#231")
                 .nickname("ab")
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .bankAccount("12345")
                 .amount(new BigDecimal("2.5"))
                 .connections(new HashSet<>())
@@ -100,7 +121,7 @@ public class BankTransactionServiceTest {
         when(memberService.findByUsername(anyString())).thenReturn(Optional.of(member));
 
         //then
-        assertThatIllegalStateException().isThrownBy(()->bankTransactionService.sendToBank(customUserDetails, BigDecimal.ONE));
+        assertThatIllegalStateException().isThrownBy(()->bankTransactionService.sendToBank(customUserDetails.getUsername(), BigDecimal.ONE));
     }
 
     @Test
@@ -110,7 +131,7 @@ public class BankTransactionServiceTest {
                 .username("ab@gmail.com")
                 .password("1x#231")
                 .nickname("ab")
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .bankAccount("12345")
                 .amount(new BigDecimal("8"))
                 .connections(new HashSet<>())
@@ -124,7 +145,7 @@ public class BankTransactionServiceTest {
         when(memberService.findByUsername(anyString())).thenReturn(Optional.of(member));
 
         //then
-        assertThatIllegalStateException().isThrownBy(()->bankTransactionService.sendToBank(customUserDetails, BigDecimal.TEN));
+        assertThatIllegalStateException().isThrownBy(()->bankTransactionService.sendToBank(customUserDetails.getUsername(), BigDecimal.TEN));
     }
 
     @Test
@@ -134,7 +155,7 @@ public class BankTransactionServiceTest {
                 .username("ab@gmail.com")
                 .password("1x#231")
                 .nickname("ab")
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .bankAccount("12345")
                 .amount(new BigDecimal("200"))
                 .connections(new HashSet<>())
@@ -149,7 +170,7 @@ public class BankTransactionServiceTest {
         when(bankTransactionRepository.save(any())).thenReturn(any());
 
         //then
-        assertThat(bankTransactionService.receiveFromBank(customUserDetails, BigDecimal.TEN)).isTrue();
+//        assertThat(bankTransactionService.receiveFromBank(customUserDetails.getUsername(), BigDecimal.TEN)).isTrue();
     }
 
     @Test
@@ -159,7 +180,7 @@ public class BankTransactionServiceTest {
                 .username("ab@gmail.com")
                 .password("1x#231")
                 .nickname("ab")
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .bankAccount("12345")
                 .amount(new BigDecimal("200"))
                 .connections(new HashSet<>())
@@ -173,6 +194,19 @@ public class BankTransactionServiceTest {
         when(memberService.findByUsername(anyString())).thenReturn(Optional.of(member));
 
         //then
-        assertThatIllegalStateException().isThrownBy(()->bankTransactionService.sendToBank(customUserDetails, BigDecimal.ONE));
+        assertThatIllegalStateException().isThrownBy(()->bankTransactionService.sendToBank(customUserDetails.getUsername(), BigDecimal.ONE));
+    }
+
+    @Test
+    public void isBankAccountExistTest() {
+        //given
+        member.setBankAccount(null);
+
+        //when
+        when(memberService.findByUsername(member.getUsername())).thenReturn(Optional.of(member));
+
+        //then
+        assertThat(bankTransactionService.isBankAccountExist(member.getUsername())).isFalse();
+
     }
 }

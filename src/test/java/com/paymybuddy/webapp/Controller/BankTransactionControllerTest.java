@@ -10,6 +10,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
+
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.*;
@@ -31,9 +34,7 @@ public class BankTransactionControllerTest {
     public void sendTest() throws Exception {
         //given
 
-
         //when
-        when(bankTransactionService.sendToBank(any(), any())).thenReturn(true);
 
         //then
         mockMvc.perform(post("/bankTransaction/send")
@@ -43,12 +44,24 @@ public class BankTransactionControllerTest {
 
     @Test
     @WithMockCustomUser
+    public void memberBankAccountIsNullTest() throws Exception {
+        //given
+
+        //when
+        when(bankTransactionService.isBankAccountExist(any())).thenReturn(false);
+        //then
+        mockMvc.perform(post("/bankTransaction/send")
+                        .param("amount", "1000"))
+                .andExpect(redirectedUrl("/profile/bankAccount"));
+    }
+
+    @Test
+    @WithMockCustomUser(amount = "100")
     public void sendTestNotEnoughMoney() throws Exception {
         //given
 
-
         //when
-        when(bankTransactionService.sendToBank(any(), any())).thenThrow(new IllegalStateException("Not enough money"));
+        doThrow(new IllegalStateException("Not enough money")).when(bankTransactionService).sendToBank(any(),any());
 
         //then
         mockMvc.perform(post("/bankTransaction/send")
@@ -57,17 +70,17 @@ public class BankTransactionControllerTest {
     }
 
     @Test
-    @WithMockCustomUser
+    @WithMockCustomUser(amount = "100")
     public void sendTestLessThanOneEuro() throws Exception {
         //given
 
 
         //when
-        when(bankTransactionService.sendToBank(any(), any())).thenThrow(new IllegalStateException("Minimum 1€"));
+        doThrow(new IllegalStateException("Minimum 1€")).when(bankTransactionService).sendToBank(any(),any());
 
         //then
         mockMvc.perform(post("/bankTransaction/send")
-                        .param("amount", "1000000"))
+                        .param("amount", "0.1"))
                 .andExpect(flash().attribute("errorMessage", "Minimum 1€"));
     }
 
@@ -78,7 +91,6 @@ public class BankTransactionControllerTest {
 
 
         //when
-        when(bankTransactionService.sendToBank(any(), any())).thenReturn(true);
 
         //then
         mockMvc.perform(post("/bankTransaction/receive")
@@ -87,17 +99,18 @@ public class BankTransactionControllerTest {
     }
 
     @Test
-    @WithMockCustomUser
+    @WithMockCustomUser(amount = "100")
     public void receiveTestLessThanOneEuro() throws Exception {
         //given
 
 
         //when
-        when(bankTransactionService.sendToBank(any(), any())).thenThrow(new IllegalStateException("Minimum 1€"));
+        doThrow(new IllegalStateException("Minimum 1€")).when(bankTransactionService).sendToBank(any(),any());
+
 
         //then
         mockMvc.perform(post("/bankTransaction/send")
-                        .param("amount", "1000000"))
+                        .param("amount", "0.10"))
                 .andExpect(flash().attribute("errorMessage", "Minimum 1€"));
     }
 

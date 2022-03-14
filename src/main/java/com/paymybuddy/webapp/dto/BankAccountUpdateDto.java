@@ -9,6 +9,5 @@ import lombok.*;
 @Setter
 @Builder
 public class BankAccountUpdateDto {
-    private CustomUserDetails customUserDetails;
     private String bankAccount;
 }

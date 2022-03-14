@@ -31,7 +31,7 @@ public class MemberRepositoryTest {
                 .username("abc@email.com")
                 .password("1111")
                 .nickname("user1")
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .bankAccount("111-111-1111")
                 .amount(BigDecimal.valueOf(1000))
                 .connections(new HashSet<>())

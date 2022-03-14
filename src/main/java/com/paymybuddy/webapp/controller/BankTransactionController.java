@@ -25,18 +25,31 @@ public class BankTransactionController {
     }
 
     @GetMapping
-    public String bankTransactionPage() {
+    public String bankTransactionPage(@AuthenticationPrincipal CustomUserDetails customUserDetails, RedirectAttributes rttr) {
         logger.info("Request Received: GET /bankTransaction");
+        try {
+            if(!bankTransactionService.isBankAccountExist(customUserDetails.getUsername())) {
+                rttr.addFlashAttribute("errorMessage", "Need to add your bank account");
+                return "redirect:/profile/bankAccount";
+            }
+        } catch (IllegalStateException e) {
+            logger.error(e.getMessage());
+        }
+
         return "bankTransaction";
     }
-
 
     @PostMapping("/send")
     public String send(@AuthenticationPrincipal CustomUserDetails customUserDetails, BankTransactionDto bankTransactionDto, RedirectAttributes rttr) {
         logger.info("Request Received: POST /bankTransaction/send");
         logger.info("Amount: " + bankTransactionDto.getAmount());
         try {
-            bankTransactionService.sendToBank(customUserDetails, bankTransactionDto.getAmount());
+            if(!bankTransactionService.isBankAccountExist(customUserDetails.getUsername())) {
+                rttr.addFlashAttribute("errorMessage", "Need to add your bank account");
+                return "redirect:/profile/bankAccount";
+            }
+
+            bankTransactionService.sendToBank(customUserDetails.getUsername(), bankTransactionDto.getAmount());
         } catch(IllegalStateException e) {
             rttr.addFlashAttribute("errorMessage", e.getMessage());
             logger.error(e.getMessage());
@@ -49,7 +62,7 @@ public class BankTransactionController {
         logger.info("Request Received: POST /bankTransaction/receive");
         logger.info("Amount: " + bankTransactionDto.getAmount());
         try {
-            bankTransactionService.receiveFromBank(customUserDetails, bankTransactionDto.getAmount());
+            bankTransactionService.receiveFromBank(customUserDetails.getUsername(), bankTransactionDto.getAmount());
         } catch(IllegalStateException e) {
             rttr.addAttribute("errorMessage", e.getMessage());
             logger.error(e.getMessage());

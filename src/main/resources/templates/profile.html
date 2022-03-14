@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Profile</title>
+</head>
+<body layout:fragment="content">
+<main>
+    <h1 class="h3 mb-3 font-weight-normal">Profile</h1>
+    <p th:text="${successMessage}"></p>
+    <p th:text="${errorMessage}"></p>
+    <ul>
+        <li><a class="btn btn-link" th:href="@{/profile/bankAccount}">Change bank account</a></li>
+    </ul>
+</main>
+</body>
+</html>

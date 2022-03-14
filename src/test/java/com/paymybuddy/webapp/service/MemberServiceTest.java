@@ -124,12 +124,10 @@ public class MemberServiceTest {
     @Test
     public void setBankAccountTest() {
         //given
-        member1.setRole(Role.GUEST);
 
         CustomUserDetails customUserDetails = new CustomUserDetails(member1);
 
         BankAccountUpdateDto bankAccountUpdateDto = BankAccountUpdateDto.builder()
-                .customUserDetails(customUserDetails)
                 .bankAccount("111-111-1111")
                 .build();
 
@@ -139,9 +137,8 @@ public class MemberServiceTest {
         when(memberService.findByUsername(anyString())).thenReturn(optionalMember1);
 
         //then
-        memberService.setBankAccount(bankAccountUpdateDto);
+        memberService.setBankAccount(member1.getUsername(), bankAccountUpdateDto);
         assertThat(optionalMember1.get().getBankAccount()).isEqualTo("111-111-1111");
-        assertThat(optionalMember1.get().getRole()).isEqualTo(Role.USER);
     }
 
     @Test
@@ -151,7 +148,6 @@ public class MemberServiceTest {
         CustomUserDetails customUserDetails = new CustomUserDetails(member1);
 
         BankAccountUpdateDto bankAccountUpdateDto = BankAccountUpdateDto.builder()
-                .customUserDetails(customUserDetails)
                 .bankAccount("111-111-1111")
                 .build();
 
@@ -159,7 +155,7 @@ public class MemberServiceTest {
         when(memberRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
         //then
-        assertThatIllegalStateException().isThrownBy(()->memberService.setBankAccount(bankAccountUpdateDto));
+        assertThatIllegalStateException().isThrownBy(()->memberService.setBankAccount(member1.getUsername(),bankAccountUpdateDto));
     }
 
     @Test

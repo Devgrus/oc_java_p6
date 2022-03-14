@@ -17,10 +17,10 @@ import java.util.*;
 @Service
 public class MemberService {
 
-    @Autowired
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Autowired
     public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
@@ -35,7 +35,7 @@ public class MemberService {
                 .username(signupDto.getUsername())
                 .password(passwordEncoder.encode(signupDto.getPassword()))
                 .nickname(signupDto.getNickname())
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .bankAccount(null)
                 .amount(BigDecimal.valueOf(0))
                 .connections(new HashSet<>())
@@ -47,13 +47,10 @@ public class MemberService {
     }
 
     @Transactional
-    public void setBankAccount(BankAccountUpdateDto bankAccountUpdateDto) {
-        Optional<Member> optionalMember = findByUsername(bankAccountUpdateDto.getCustomUserDetails().getUsername());
+    public void setBankAccount(String username, BankAccountUpdateDto bankAccountUpdateDto) {
+        Optional<Member> optionalMember = findByUsername(username);
         if(optionalMember.isEmpty()) throw new IllegalStateException("User not found");
-        optionalMember.ifPresent(i-> {
-            i.setBankAccount(bankAccountUpdateDto.getBankAccount());
-            if(i.getRole() == Role.GUEST) i.setRole(Role.USER);
-                });
+        optionalMember.ifPresent(i-> i.setBankAccount(bankAccountUpdateDto.getBankAccount()));
     }
 
     @Transactional
@@ -72,7 +69,7 @@ public class MemberService {
 
         Member member = optionalMember.get();
 
-        if(member.getId() == optionalConnectionMember.get().getId()) throw new IllegalStateException("Can not add yourself");
+        if(member.getId().equals(optionalConnectionMember.get().getId())) throw new IllegalStateException("Can not add yourself");
 
         member.getConnections().add(optionalConnectionMember.get());
     }
