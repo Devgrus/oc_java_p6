@@ -5,10 +5,13 @@
       layout:decorate="~{fragments/layout}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Home</title>
+    <title>Pay My Buddy - We make moving your money easy!</title>
 </head>
 <body layout:fragment="content">
-    <h1>This is home</h1>
-    <span sec:authorize="isAuthenticated()" th:text="${#authentication.getPrincipal().getNickname()}"></span>
+    <main class="d-flex flex-column align-items-center">
+        <h1 class="h2 mt-2 mb-5">Welcome to Pay My Buddy</h1>
+        <span class="my-2 h4" sec:authorize="isAuthenticated()" th:text="'Hello, ' + ${#authentication.getPrincipal().getNickname()} + ' !'"></span>
+        <img class="img-fluid" th:src="@{/img/img_paymybuddy.png}" alt="Pay My Buddy main page image" />
+    </main>
 </body>
 </html>

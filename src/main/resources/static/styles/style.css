@@ -1,0 +1,14 @@
+.color-primary {
+    background-color: #8BD176;
+}
+
+.color-primary-text {
+    color: #8BD176;
+}
+
+.toggle-line {
+    width: 1.5em;
+    height: 0.2em;
+    background-color: black;
+    margin: 6px 0;
+}

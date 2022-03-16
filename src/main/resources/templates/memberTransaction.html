@@ -7,86 +7,96 @@
     <title>Transaction Page</title>
 </head>
 <body layout:fragment="content">
-    <form class="w-50" method="post" th:action="@{/memberTransaction}">
-        <h1 class="h3 mb-3 font-weight-normal">Transaction</h1>
-        <p th:text="${errorMessage}"></p>
-        <div class="input-group mb-3">
-            <input type="number" id="amount" name="amount" class="form-control" placeholder="Amount" required autofocus>
-            <div class="input-group-append">
-                <span class="input-group-text">€</span>
-            </div>
-            <label for="connection" class="sr-only">connection</label>
-            <select id="connection" name="connection" required>
-                <option value="">Select a connection</option>
-                <option th:each="connection:${connections}" th:value="${connection.getId}" th:text="${connection.getUsername} + ' - ' + ${connection.getNickname}"></option>
-            </select>
-            <label for="description" class="sr-only">description</label>
-            <input type="text" id="description" name="description" class="form-control" placeholder="Description" required>
+    <main class="w-75 m-auto">
+        <div class="d-flex justify-content-between">
+            <h1 class="h3 mb-3 font-weight-normal">Send Money</h1>
+            <a class="btn btn-lg btn-primary btn-block d-none d-md-block" th:href="@{/contact}">Add Connection</a>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Send</button>
-
-        <table class="table">
-            <h2>My Transactions</h2>
-            <tr>
-                <th>Connections</th>
-                <th>Description</th>
-                <th>Amount</th>
-            </tr>
-            <tr th:each="list: ${transactionList}">
-                <td th:text="${list.username}"></td>
-                <td th:text="${list.description}"></td>
-                <td th:text="${list.amount}"></td>
-            </tr>
-        </table>
-        <nav style="text-align: center;"
-             th:if="${!transactionList.isEmpty()}"
-             th:with="
+        <p th:text="${errorMessage}"></p>
+        <form class="bg-light pt-3 d-flex flex-column flex-md-row justify-content-center align-items-center" method="post" th:action="@{/memberTransaction}">
+            <div class="row mx-3">
+                <div class="input-group mb-3 col-md">
+                    <input type="number" id="amount" name="amount" class="form-control" placeholder="Amount" required aria-label="amount" autofocus>
+                    <div class="input-group-append">
+                        <span class="input-group-text">€</span>
+                    </div>
+                </div>
+                <div class="input-group mb-3 col-md">
+                    <select id="receiver" name="receiver" class="form-select" aria-label="receiver" required>
+                        <option value="">Select a connection</option>
+                        <option th:each="connection:${connections}" th:value="${connection.username}" th:text="${connection.getUsername} + ' - ' + ${connection.getNickname}"></option>
+                    </select>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" id="description" name="description" class="form-control" aria-label="description" placeholder="Description" required>
+                </div>
+            </div>
+            <button class="btn btn-lg btn-success" type="submit">&nbsp;&nbsp;Pay&nbsp;&nbsp;</button>
+        </form>
+        <h2 class="h3 my-3">My Transactions</h2>
+        <div class="d-flex flex-column align-items-center">
+            <table class="table border">
+                <tr class="bg-success text-center align-middle text-white" height="60">
+                    <th>Connections</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+                <tr th:each="list, rowStat: ${transactionList}" class="text-center align-middle" height="60" th:classappend="${rowStat.odd} ? 'table-secondary' : ''">
+                    <td th:text="${list.username}"></td>
+                    <td th:text="${list.description}"></td>
+                    <td th:text="${list.amount}"></td>
+                </tr>
+            </table>
+            <nav class="text-center"
+                 th:if="${!transactionList.isEmpty()}"
+                 th:with="
                 pageNumber = ${transactionList.pageable.pageNumber},
                 pageSize = ${transactionList.pageable.pageSize},
                 totalPages = ${transactionList.totalPages},
                 startPage = ${T(Math).floor(pageNumber / pageSize) * pageSize + 1},
                 tempEndPage = ${startPage + pageSize - 1},
                 endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
-             aria-label="Page navigation">
-            <ul class="pagination ">
-                <!-- Go to first page -->
-                <li th:classappend="${pageNumber < pageSize} ? 'disabled'" class="page-item">
-                    <a class="page-link" th:href="@{/memberTransaction(page=0)}">
-                        <span>&laquo;</span>
-                        <span class="sr-only">First</span>
-                    </a>
-                </li>
+                 aria-label="Page navigation">
+                <ul class="pagination ">
+                    <!-- Go to first page -->
+                    <li th:classappend="${pageNumber < pageSize} ? 'disabled'" class="page-item">
+                        <a class="page-link" th:href="@{/memberTransaction(page=0)}">
+                            <span>&laquo;</span>
+                            <span class="sr-only">First</span>
+                        </a>
+                    </li>
 
-                <!-- Previous -->
-                <li th:classappend="${transactionList.first} ? 'disabled'" class="page-item">
-                    <a class="page-link" th:href="${transactionList.first} ? '#' : @{/memberTransaction(page=${pageNumber - 1})}" aria-label="Previous">
-                        <span aria-hidden="true">&lt;</span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                </li>
+                    <!-- Previous -->
+                    <li th:classappend="${transactionList.first} ? 'disabled'" class="page-item">
+                        <a class="page-link" th:href="${transactionList.first} ? '#' : @{/memberTransaction(page=${pageNumber - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
 
-                <!-- number of page -->
-                <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
-                    <a th:text="${page}" class="page-link" th:href="@{/memberTransaction(page=${page - 1})}"></a>
-                </li>
+                    <!-- number of page -->
+                    <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
+                        <a th:text="${page}" class="page-link" th:href="@{/memberTransaction(page=${page - 1})}"></a>
+                    </li>
 
-                <!-- Next -->
-                <li th:classappend="${transactionList.last} ? 'disabled'" class="page-item">
-                    <a class="page-link" th:href="${transactionList.last} ? '#' : @{/memberTransaction(page=${pageNumber + 1})}" aria-label="Next">
-                        <span aria-hidden="true">&gt;</span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </li>
+                    <!-- Next -->
+                    <li th:classappend="${transactionList.last} ? 'disabled'" class="page-item">
+                        <a class="page-link" th:href="${transactionList.last} ? '#' : @{/memberTransaction(page=${pageNumber + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
 
-                <!-- Go to Last -->
-                <li th:classappend=" ${T(Math).floor(totalPages / pageSize) * pageSize - 1 <= startPage} ? 'disabled'" class="page-item">
-                    <a class="page-link" th:href="@{/memberTransaction(page=${totalPages - 1})}">
-                        <span>&raquo;</span>
-                        <span class="sr-only">Last</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </form>
+                    <!-- Go to Last -->
+                    <li th:classappend=" ${T(Math).floor(totalPages / pageSize) * pageSize - 1 <= startPage} ? 'disabled'" class="page-item">
+                        <a class="page-link" th:href="@{/memberTransaction(page=${totalPages - 1})}">
+                            <span>&raquo;</span>
+                            <span class="sr-only">Last</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </main>
 </body>
 </html>

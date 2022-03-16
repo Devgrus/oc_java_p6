@@ -4,20 +4,28 @@
       xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head>
+    <link rel="stylesheet" th:href="@{/styles/sign_up_in.css}" />
     <title>Sign in</title>
 </head>
-<body layout:fragment="content">
-    <main class="d-flex justify-content-center">
-        <form class="w-50" method="post" action="/login">
-            <h1 class="h3 mb-3 font-weight-normal">Login</h1>
-            <label for="username" class="sr-only">Email</label>
-            <input type="email" id="username" name="username" class="form-control" placeholder="Email" required autofocus>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-            <label>
-                <input type="checkbox" name="remember-me"> Remember me
-            </label>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+<body layout:fragment="content" class="text-center">
+    <main class="form-signin">
+        <form class="border rounded-3 p-2 p-lg-5" method="post" action="/login">
+            <span class="fs-4 text-white color-primary rounded p-2">Pay my buddy</span>
+            <h1 class="h3 my-3 font-weight-normal">Sign in</h1>
+            <div class="form-floating mb-3">
+                <input type="email" id="username" name="username" class="form-control" placeholder="Email" required autofocus>
+                <label for="username">Email</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                <label for="password">Password</label>
+            </div>
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" name="remember-me"> Remember me
+                </label>
+            </div>
+            <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">Login</button>
         </form>
     </main>
 </body>
