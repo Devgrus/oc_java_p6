@@ -40,6 +40,8 @@ public class MemberTransactionService {
         Member remitter = optionalRemitter.get();
         Member receiver = optionalReceiver.get();
 
+        if(remitter.getId() == receiver.getId()) throw new IllegalStateException("Remitter can not be receiver");
+
         BigDecimal amountBefore = remitter.getAmount();
 
         if(memberTransactionDto.getAmount().compareTo(new BigDecimal("1")) < 0) {
