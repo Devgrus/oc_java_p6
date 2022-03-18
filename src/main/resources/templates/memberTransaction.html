@@ -44,7 +44,8 @@
                 <tr th:each="list, rowStat: ${transactionList}" class="text-center align-middle" height="60" th:classappend="${rowStat.odd} ? 'table-secondary' : ''">
                     <td th:text="${list.username}"></td>
                     <td th:text="${list.description}"></td>
-                    <td th:text="${list.amount}"></td>
+<!--                    <td th:text="${list.amount}"></td>-->
+                    <td th:text="${list.amount.toString().replace('.', ',')} + ' €'"></td>
                 </tr>
             </table>
             <nav class="text-center"
