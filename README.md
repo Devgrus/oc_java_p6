@@ -1,1 +1,5 @@
-# oc_java_p6
+# Paymybuddy
+
+![model](./img/model.png)
+
+![uml](./img/uml.png)
