@@ -26,7 +26,7 @@ public class MemberTransaction {
     private BigDecimal fee;
 
     @Column(name = "transaction_time")
-    private LocalDateTime transitionTime;
+    private LocalDateTime transactionTime;
 
     @Column
     private String description;
