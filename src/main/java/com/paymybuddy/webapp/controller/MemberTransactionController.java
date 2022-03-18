@@ -8,6 +8,7 @@ import com.paymybuddy.webapp.service.MemberService;
 import com.paymybuddy.webapp.service.MemberTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -30,6 +31,7 @@ public class MemberTransactionController {
     private final MemberTransactionService memberTransactionService;
     private final MemberService memberService;
 
+    @Autowired
     public MemberTransactionController(MemberTransactionService memberTransactionService, MemberService memberService) {
         this.memberTransactionService = memberTransactionService;
         this.memberService = memberService;

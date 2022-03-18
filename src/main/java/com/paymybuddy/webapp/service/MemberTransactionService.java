@@ -14,8 +14,6 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -62,7 +60,7 @@ public class MemberTransactionService {
         MemberTransaction memberTransaction = MemberTransaction.builder()
                 .amount(memberTransactionDto.getAmount())
                 .fee(fee)
-                .transitionTime(LocalDateTime.now())
+                .transactionTime(LocalDateTime.now())
                 .description(memberTransactionDto.getDescription())
                 .remitter(remitter)
                 .receiver(receiver)
@@ -76,7 +74,7 @@ public class MemberTransactionService {
         if(optionalMember.isEmpty()) throw new IllegalStateException("User Not Found");
         Member member = optionalMember.get();
 
-        Page<MemberTransaction> memberTransactions = memberTransactionRepository.findByRemitterOrderByTransitionTimeDesc(member, pageable);
+        Page<MemberTransaction> memberTransactions = memberTransactionRepository.findByRemitterOrderByTransactionTimeDesc(member, pageable);
 
         return memberTransactions.map(i-> MemberTransactionListDto.builder()
                 .amount(i.getAmount())

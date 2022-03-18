@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberTransactionRepository extends JpaRepository<MemberTransaction, Long> {
-    Page<MemberTransaction> findByRemitterOrderByTransitionTimeDesc(Member member, Pageable pageable);
+    Page<MemberTransaction> findByRemitterOrderByTransactionTimeDesc(Member member, Pageable pageable);
 }
