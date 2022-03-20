@@ -1,7 +1,6 @@
 package com.paymybuddy.webapp.service;
 
 import com.paymybuddy.webapp.model.BankTransaction;
-import com.paymybuddy.webapp.model.CustomUserDetails;
 import com.paymybuddy.webapp.model.Member;
 import com.paymybuddy.webapp.repository.BankTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;

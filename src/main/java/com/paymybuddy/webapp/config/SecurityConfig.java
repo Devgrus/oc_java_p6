@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -37,14 +36,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/signup", "/h2-console/**", "/styles/**", "/img/**")
+                .antMatchers("/", "/login", "/signup", "/styles/**", "/img/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().csrf()
-                .ignoringAntMatchers("/h2-console/**")
-                .and()
-                .headers().addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
                 .and().formLogin()
                 .loginPage("/login")
                 .and().rememberMe()
@@ -54,8 +50,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(customUserDetailsService)
                 .and().logout()
                 .logoutSuccessUrl("/")
-//                .and().oauth2Login()
-//                .loginPage("/login")
                 .and().csrf().disable();
 
         // Accept only one session per member

@@ -1,6 +1,5 @@
 package com.paymybuddy.webapp.dto;
 
-import com.paymybuddy.webapp.model.CustomUserDetails;
 import lombok.*;
 
 @AllArgsConstructor
