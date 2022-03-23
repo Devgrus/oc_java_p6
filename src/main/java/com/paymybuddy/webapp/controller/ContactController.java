@@ -23,6 +23,12 @@ public class ContactController {
         this.memberService = memberService;
     }
 
+    /**
+     * contact page
+     * @param customUserDetails user information
+     * @param model model
+     * @return contact page
+     */
     @GetMapping
     public String contactPage(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         logger.info("Request Received: GET /contact");
@@ -30,6 +36,13 @@ public class ContactController {
         return "contact";
     }
 
+    /**
+     * Add a connection
+     * @param customUserDetails user information
+     * @param connectionDto connection information
+     * @param rttr send to redirect page
+     * @return contact page
+     */
     @PostMapping
     public String addConnection(@AuthenticationPrincipal CustomUserDetails customUserDetails, ConnectionDto connectionDto, RedirectAttributes rttr) {
         try {
@@ -40,6 +53,13 @@ public class ContactController {
         return "redirect:/contact";
     }
 
+    /**
+     * Delete a connection
+     * @param customUserDetails user information
+     * @param username connection email
+     * @param rttr send to redirect page
+     * @return contact page
+     */
     @DeleteMapping("/{username}")
     public String deleteConnection(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable String username, RedirectAttributes rttr) {
         memberService.deleteConnection(customUserDetails.getUsername(), username);

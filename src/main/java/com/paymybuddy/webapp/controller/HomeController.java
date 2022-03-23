@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
+    /**
+     * main page
+     * @param customUserDetails user information
+     * @param model model
+     * @return main page
+     */
     @GetMapping("/")
     public String home(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
         if(customUserDetails != null) model.addAttribute("nickname", customUserDetails.getNickname());

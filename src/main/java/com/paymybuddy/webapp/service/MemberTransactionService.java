@@ -28,6 +28,11 @@ public class MemberTransactionService {
         this.memberTransactionRepository = memberTransactionRepository;
     }
 
+    /**
+     * remit -> send money to connection
+     * @param remitterUsername remiiter email
+     * @param memberTransactionDto receiver information
+     */
     @Transactional
     public void remit(String remitterUsername, MemberTransactionDto memberTransactionDto) {
         Optional<Member> optionalRemitter = memberService.findByUsername(remitterUsername);
@@ -69,6 +74,12 @@ public class MemberTransactionService {
         memberTransactionRepository.save(memberTransaction);
     }
 
+    /**
+     * Get list of transactions
+     * @param username user email
+     * @param pageable paging information
+     * @return list of transactions
+     */
     public Page<MemberTransactionListDto> transactionList(String username, Pageable pageable) {
         Optional<Member> optionalMember = memberService.findByUsername(username);
         if(optionalMember.isEmpty()) throw new IllegalStateException("User Not Found");

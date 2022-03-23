@@ -24,12 +24,22 @@ public class BankTransactionService {
         this.memberService = memberService;
     }
 
+    /**
+     * verify the existence of bank account
+     * @param username user email
+     * @return if bank account exist return true. Else, return false.
+     */
     public boolean isBankAccountExist(String username) {
         Optional<Member> optionalMember = memberService.findByUsername(username);
         if(optionalMember.isEmpty()) throw new IllegalStateException("User not found");
         return optionalMember.get().getBankAccount() != null;
     }
 
+    /**
+     * Send money to bank
+     * @param username user email
+     * @param amount transaction amount
+     */
     @Transactional
     public void sendToBank(String username, BigDecimal amount) {
         Optional<Member> optionalMember = memberService.findByUsername(username);
@@ -57,6 +67,11 @@ public class BankTransactionService {
         bankTransactionRepository.save(bankTransaction);
     }
 
+    /**
+     * receive money from bank
+     * @param username user email
+     * @param amount transaction amount
+     */
     @Transactional
     public void receiveFromBank(String username, BigDecimal amount) {
         Optional<Member> optionalMember = memberService.findByUsername(username);
@@ -80,10 +95,19 @@ public class BankTransactionService {
         bankTransactionRepository.save(bankTransaction);
     }
 
+    /**
+     * If transaction amount is less than minimum transaction amount, then return error
+     * @param amount transaction amount
+     */
     private void isMoreThanMinimumTransactionAmount(BigDecimal amount) {
         if(amount.compareTo(new BigDecimal("1")) < 0) throw new IllegalStateException("Minimum 1€");
     }
 
+    /**
+     * Calculate transaction fee
+     * @param amount transaction amount
+     * @return
+     */
     private BigDecimal calculateFee(BigDecimal amount) {
         return amount.compareTo(new BigDecimal("2.1")) >= 0 ?
                 amount.multiply(new BigDecimal("0.005")).setScale(2, RoundingMode.HALF_EVEN) :

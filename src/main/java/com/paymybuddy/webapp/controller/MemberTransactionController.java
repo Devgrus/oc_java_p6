@@ -37,6 +37,13 @@ public class MemberTransactionController {
         this.memberService = memberService;
     }
 
+    /**
+     * member transaction page
+     * @param customUserDetails user information
+     * @param pageable paging information
+     * @param model model
+     * @return member transaction page
+     */
     @GetMapping
     public String memberTransactionPage(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PageableDefault(size = 5) Pageable pageable, Model model) {
         logger.info("Request Received: GET /memberTransaction");
@@ -51,6 +58,13 @@ public class MemberTransactionController {
         return "memberTransaction";
     }
 
+    /**
+     * Send money to a connection
+     * @param customUserDetails user information
+     * @param memberTransactionDto transaction information
+     * @param rttr send to redirect page
+     * @return member transaction page
+     */
     @PostMapping
     public String sendMoney(@AuthenticationPrincipal CustomUserDetails customUserDetails, MemberTransactionDto memberTransactionDto, RedirectAttributes rttr) {
         logger.info("Request Received: POST /memberTransaction");

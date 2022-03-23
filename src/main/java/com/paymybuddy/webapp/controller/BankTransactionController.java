@@ -24,6 +24,12 @@ public class BankTransactionController {
         this.bankTransactionService = bankTransactionService;
     }
 
+    /**
+     * bank transaction page
+     * @param customUserDetails user information
+     * @param rttr send attribute to redirect page
+     * @return if user has bank account, then return bankTransaction page. Else, bankAccount page.
+     */
     @GetMapping
     public String bankTransactionPage(@AuthenticationPrincipal CustomUserDetails customUserDetails, RedirectAttributes rttr) {
         logger.info("Request Received: GET /bankTransaction");
@@ -39,6 +45,13 @@ public class BankTransactionController {
         return "bankTransaction";
     }
 
+    /**
+     * send money to bank
+     * @param customUserDetails user information
+     * @param bankTransactionDto bank transaction information
+     * @param rttr send attribute to redirect page
+     * @return if user has bank account, then return bankTransaction page. Else, bankAccount page.
+     */
     @PostMapping("/send")
     public String send(@AuthenticationPrincipal CustomUserDetails customUserDetails, BankTransactionDto bankTransactionDto, RedirectAttributes rttr) {
         logger.info("Request Received: POST /bankTransaction/send");
@@ -57,11 +70,23 @@ public class BankTransactionController {
         return "redirect:/bankTransaction";
     }
 
+    /**
+     * receive money from bank
+     * @param customUserDetails user information
+     * @param bankTransactionDto bank transaction information
+     * @param rttr send attribute to redirect page
+     * @return if user has bank account, then return bankTransaction page. Else, bankAccount page.
+     */
     @PostMapping("/receive")
     public String receive(@AuthenticationPrincipal CustomUserDetails customUserDetails, BankTransactionDto bankTransactionDto, RedirectAttributes rttr) {
         logger.info("Request Received: POST /bankTransaction/receive");
         logger.info("Amount: " + bankTransactionDto.getAmount());
         try {
+            if(!bankTransactionService.isBankAccountExist(customUserDetails.getUsername())) {
+                rttr.addFlashAttribute("errorMessage", "Need to add your bank account");
+                return "redirect:/profile/bankAccount";
+            }
+
             bankTransactionService.receiveFromBank(customUserDetails.getUsername(), bankTransactionDto.getAmount());
         } catch(IllegalStateException e) {
             rttr.addAttribute("errorMessage", e.getMessage());

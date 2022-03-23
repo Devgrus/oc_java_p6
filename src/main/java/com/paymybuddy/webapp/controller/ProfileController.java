@@ -26,19 +26,34 @@ public class ProfileController {
         this.memberService = memberService;
     }
 
+    /**
+     * profile page
+     * @param customUserDetails user information
+     * @return profile page
+     */
     @GetMapping
     public String profilePage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         logger.info("Request Received: GET /profile");
-        customUserDetails.getAuthorities().stream().forEach(i->System.out.println(i.getAuthority()));
         return "profile";
     }
 
+    /**
+     * bank account page
+     * @return bank account page
+     */
     @GetMapping("/bankAccount")
     public String bankAccountPage() {
         logger.info("Request Received: GET /profile/bankAccount");
         return "bankAccount";
     }
 
+    /**
+     * set bank account
+     * @param customUserDetails user information
+     * @param bankAccountUpdateDto bank account information
+     * @param rttr send to redirect page
+     * @return profile page
+     */
     @PostMapping("/bankAccount")
     public String setBankAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails, BankAccountUpdateDto bankAccountUpdateDto, RedirectAttributes rttr) {
         logger.info("Request Received: POST /profile/bankAccount");

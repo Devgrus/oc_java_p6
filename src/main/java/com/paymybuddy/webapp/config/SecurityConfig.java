@@ -40,7 +40,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .anyRequest()
                 .authenticated()
-                .and().csrf()
                 .and().formLogin()
                 .loginPage("/login")
                 .and().rememberMe()

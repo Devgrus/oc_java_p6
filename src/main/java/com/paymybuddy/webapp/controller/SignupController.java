@@ -22,12 +22,22 @@ public class SignupController {
         this.memberService = memberService;
     }
 
+    /**
+     * signup page
+     * @return signup page
+     */
     @GetMapping
     public String signupForm() {
         logger.info("Request received: GET /signup");
         return "signup";
     }
 
+    /**
+     * sign up
+     * @param signupDto sign up information
+     * @param model model
+     * @return if user was created, then redirect login page. Else, signup page with error message.
+     */
     @PostMapping
     public String signup(SignupDto signupDto, Model model) {
         logger.info("Request received: POST /signup");

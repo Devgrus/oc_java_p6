@@ -26,6 +26,11 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Save a new user
+     * @param signupDto All user information for new account
+     * @return Member
+     */
     public Member save(SignupDto signupDto) {
         Optional<Member> member = memberRepository.findByUsername(signupDto.getUsername());
         if(member.isPresent()) {
@@ -46,6 +51,11 @@ public class MemberService {
         return memberRepository.save(newMember);
     }
 
+    /**
+     * Modify / add a bank account
+     * @param username user email
+     * @param bankAccountUpdateDto bank account information
+     */
     @Transactional
     public void setBankAccount(String username, BankAccountUpdateDto bankAccountUpdateDto) {
         Optional<Member> optionalMember = findByUsername(username);
@@ -61,6 +71,11 @@ public class MemberService {
     @Transactional
     public Optional<Member> findById(Long id) { return memberRepository.findById(id); }
 
+    /**
+     * Add a connection
+     * @param username user email
+     * @param connectionDto connection user information
+     */
     @Transactional
     public void addConnection(String username, ConnectionDto connectionDto) {
         Optional<Member> optionalMember = findByUsername(username);
@@ -74,6 +89,11 @@ public class MemberService {
         member.getConnections().add(optionalConnectionMember.get());
     }
 
+    /**
+     * Delete a connection
+     * @param username user email
+     * @param connectionUsername connection user information
+     */
     @Transactional
     public void deleteConnection(String username, String connectionUsername) {
         Optional<Member> optionalMember = findByUsername(username);
@@ -85,6 +105,11 @@ public class MemberService {
                 .ifPresent(member.getConnections()::remove);
     }
 
+    /**
+     * Get list of all connections
+     * @param username user email
+     * @return list of all connections
+     */
     public Set<Member> getAllConnections(String username) {
         Optional<Member> optionalMember = findByUsername(username);
         if(optionalMember.isEmpty()) throw new IllegalStateException("User not exist");

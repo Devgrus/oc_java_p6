@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class LoginController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * login page
+     * @return login page
+     */
     @GetMapping
     public String loginPage() {
         logger.info("Request received: GET /login");
