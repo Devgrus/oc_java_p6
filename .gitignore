@@ -33,3 +33,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Jasypt config file ###
+src/main/java/**/config/JasyptConfig.java
